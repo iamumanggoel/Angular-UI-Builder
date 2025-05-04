@@ -79,4 +79,16 @@ export class FormService {
     this._rows.set(newRows);
   }
 
+  removeField(fieldId: string){
+    const rows = this._rows();
+
+    const newRows = rows.map(row => {
+      const updatedFileds = row.fields.filter(field => field.id !== fieldId);
+      return {
+        ...row,
+        fields: updatedFileds
+      }
+    });
+    this._rows.set(newRows);
+  }
 }
