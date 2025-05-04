@@ -4,6 +4,12 @@
 
 @custom-varient dark (&:is(.dark *));
 
+@layer base {
+    *, ::before, ::after, ::backdrop, ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }   
+}
+
 @theme {
     /* --color-*: initial; */
     --color-primary: var(--mat-sys-primary);

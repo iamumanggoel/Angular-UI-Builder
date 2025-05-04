@@ -3,3 +3,11 @@
 @use './app/styles/tailwind.css';
 
 @use './app/styles/custom.scss';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.cdk-drop-list-dragging {
+    border: 2px solid lightgray !important;
+    background-color: lightgray !important;
+}
