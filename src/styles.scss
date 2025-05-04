@@ -1,1 +1,5 @@
-/* You can add global styles to this file, and also import other style files */
+@use './app/styles/material.scss';
+
+@use './app/styles/tailwind.css';
+
+@use './app/styles/custom.scss';
