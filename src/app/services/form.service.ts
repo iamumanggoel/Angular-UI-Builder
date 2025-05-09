@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { FieldTypeDefiniton, FormField, FormRow } from '../models/form';
-import { TextFieldComponent } from '../components/form-builder/form-canvas/preview-form-fields/text-field.component';
-import { CheckboxFieldComponent } from '../components/form-builder/form-canvas/preview-form-fields/checkbox-field.component';
+import { TextFieldComponent } from '../components/form-builder/form-canvas/preview/text-field.component';
+import { CheckboxFieldComponent } from '../components/form-builder/form-canvas/preview/checkbox-field.component';
 
 const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
   type: 'text',
@@ -89,6 +89,66 @@ export class FormService {
         fields: updatedFileds
       }
     });
+    this._rows.set(newRows);
+  }
+
+
+  addRow(){
+    const newRow: FormRow = {
+      id: crypto.randomUUID(),
+      fields: []
+    }
+
+    const rows = this._rows();
+    this._rows.set([...rows, newRow]);
+  }
+    
+  removeRow(rowId: string){
+    if(this._rows().length === 1){
+      return;
+    }
+
+    const rows = this._rows();
+
+    const newRows = rows.filter(row => row.id !== rowId);
+    this._rows.set(newRows);
+  }
+
+
+  moveField(fieldId: string, src_rowId: string, dest_rowId: string, dest_index: number){
+    const rows = this._rows();
+
+    let fieldToMove: FormField | undefined;
+    let src_rowIndex = -1;
+    let src_fieldIndex = -1;
+
+    rows.forEach((row, index) => {
+      if(row.id === src_rowId){
+        src_rowIndex = index;
+
+        src_fieldIndex = row.fields.findIndex(field => field.id === fieldId);
+
+        if(src_fieldIndex >= 0){
+          fieldToMove = row.fields[src_fieldIndex];
+        }
+      }
+    });
+
+    if(!fieldToMove) return;
+
+    const newRows = [...rows];
+
+    const fieldWithRemoveField = newRows[src_rowIndex].fields.filter(field => field.id !== fieldId);
+    newRows[src_rowIndex].fields = fieldWithRemoveField;
+    
+    const dest_rowIndex = newRows.findIndex(row => row.id === dest_rowId);
+
+    if(dest_rowIndex >= 0){
+      const targetFields = [...newRows[dest_rowIndex].fields];
+      targetFields.splice(dest_index, 0, fieldToMove);
+      newRows[dest_rowIndex].fields = targetFields;
+    }
+    
     this._rows.set(newRows);
   }
 }

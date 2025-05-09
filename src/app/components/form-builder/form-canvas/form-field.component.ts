@@ -4,14 +4,15 @@ import { FormService } from '../../../services/form.service';
 import { NgComponentOutlet, TitleCasePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { FieldPreviewComponent } from "./preview/field-preview.component";
 @Component({
   selector: 'app-form-field',
   imports: [
-    NgComponentOutlet,
     TitleCasePipe,
     MatButtonModule,
     MatIconModule,
-  ],
+    FieldPreviewComponent
+],
   template: `
     <div class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 hover:border-black cursor-pointer"> 
       <div class="flex items-center justify-between mb-1">
@@ -21,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
         </button>
       </div>
 
-      <ng-container [ngComponentOutlet]="previewComponent()" [ngComponentOutletInputs]="{ field: field() }"></ng-container>
+      <app-field-preview [field]="field()" />
     </div>
   `,
   styles: ``
@@ -30,12 +31,6 @@ export class FormFieldComponent {
   field = input.required<FormField>();
 
   formService = inject(FormService);
-
-  previewComponent = computed(() => {
-    const type = this.formService.getFieldType(this.field().type);
-    console.log(type, this.field());
-    return type?.component ?? null;
-  });
 
   removeField(e: Event){
     e.stopPropagation();
