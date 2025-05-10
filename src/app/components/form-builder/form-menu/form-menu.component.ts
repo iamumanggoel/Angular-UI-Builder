@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { StyleDirective } from '../../../directives/style.directive';
 import { FormService } from '../../../services/form.service';
 import { ButtonComponent } from "./button.component";
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CdkDrag, CdkDropList, DragDropModule } from '@angular/cdk/drag-drop';
 @Component({
   selector: 'app-form-menu',
   imports: [
@@ -18,6 +18,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
         cdkDropList
         [cdkDropListSortingDisabled]="'true'"
         [cdkDropListData]="'form-menu-selector'"
+        [cdkDropListEnterPredicate]="noDropAllowed"
         class="flex flex-col gap-4 elements-menu">
         @for(type of formService.getFieldTypes(); track type.type){
           <app-button [field]="type" />
@@ -29,4 +30,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 })
 export class FormMenuComponent {
   formService = inject(FormService);
+
+  noDropAllowed(drag: CdkDrag<any>, drop: CdkDropList<any>): boolean {
+    return false;
+  }
 }

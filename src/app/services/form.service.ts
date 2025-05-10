@@ -1,7 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { FieldTypeDefiniton, FormField, FormRow } from '../models/form';
 import { TextFieldComponent } from '../components/form-builder/form-canvas/preview/text-field.component';
 import { CheckboxFieldComponent } from '../components/form-builder/form-canvas/preview/checkbox-field.component';
+import { SelectFieldComponent } from '../components/form-builder/form-canvas/preview/select-field.component';
 
 const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
   type: 'text',
@@ -11,6 +12,51 @@ const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
     label: 'Text Field',
     required: false
   },
+  settingsConfig: [
+    {
+      type: 'text',
+      label: 'Label',
+      key: 'label'
+    },
+    {
+      type: 'text',
+      label: 'Placeholder',
+      key: 'placeholder'
+    },
+    {
+      type: 'checkbox',
+      label: 'Required',
+      key: 'required'
+    },
+    {
+      type: 'select',
+      label: 'Input Type',
+      key: 'inputType',
+      options: [
+        {
+          label: 'Text',
+          value: 'text'
+        },
+        {
+          label: 'Number',
+          value: 'number'
+        },
+        {
+          label: 'Password',
+          value: 'password'
+        },
+        {
+          label: 'Email',
+          value: 'email'
+        },
+        {
+          label: 'Phone',
+          value: 'tel'
+        }
+      ]
+    }
+    
+  ],
   component: TextFieldComponent,
 }
 
@@ -22,9 +68,53 @@ const CHECKBOX_FIELD_DEFINTION: FieldTypeDefiniton = {
     label: 'Checkbox Field',
     required: false
   },
+  settingsConfig: [
+    {
+      type: 'text',
+      label: 'Label',
+      key: 'label'
+    },
+    {
+      type: 'checkbox',
+      label: 'Required',
+      key: 'required'
+    }
+  ],
   component: CheckboxFieldComponent,
 }
 
+const SELECT_FIELD_DEFINTION: FieldTypeDefiniton = {
+  type: 'select',
+  icon: 'arrow_drop_down_circle',
+  label: 'Dropdown',
+  defaultConfigs: {
+    label: 'Select',
+    required: false,
+    options: [
+      { value: 'option1', label: 'Option 1' },
+      { value: 'option2', label: 'Option 2' },
+      { value: 'option3', label: 'Option 3' }
+    ]
+  },
+  settingsConfig: [
+    {
+      type: 'text',
+      label: 'Label',
+      key: 'label'
+    },
+    {
+      type: 'checkbox',
+      label: 'Required',
+      key: 'required'
+    },
+    {
+      type: 'dynamic-options',
+      key: 'options',
+      label: 'Options',
+    }
+  ],
+  component: SelectFieldComponent,
+}
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +123,8 @@ export class FormService {
 
   fieldTypes = new Map<string, FieldTypeDefiniton>([
     ['text', TEXT_FIELD_DEFINTION],
-    ['checkbox', CHECKBOX_FIELD_DEFINTION]
+    ['checkbox', CHECKBOX_FIELD_DEFINTION],
+    ['select', SELECT_FIELD_DEFINTION]
   ]);
 
   getFieldTypes(): FieldTypeDefiniton[] {
@@ -44,9 +135,14 @@ export class FormService {
     return this.fieldTypes.get(type);
   }
 
+  private _selectedFieldId = signal<string | null>(null);
   private _rows =  signal<FormRow[]>([]);
-  public  readonly rows = this._rows.asReadonly();
 
+  public  readonly rows = this._rows.asReadonly();
+  
+  public readonly selectedField = computed(() => {
+    return this._rows().flatMap(row => row.fields).find(field => field.id === this._selectedFieldId());
+  });
   
   constructor() {
     this._rows.set([
@@ -92,6 +188,21 @@ export class FormService {
     this._rows.set(newRows);
   }
 
+  updateField(fieldId: string, data: Partial<FormField>){
+    const rows = this._rows();
+    const newRows = rows.map(row =>({
+      ...row,
+      fields: row.fields.map(f => f.id === fieldId ? { ...f, ...data } : f)
+    }));
+
+    this._rows.set(newRows);
+  }
+
+
+  setSelectedField(fieldId: string){
+    this._selectedFieldId.set(fieldId);
+  }
+  
 
   addRow(){
     const newRow: FormRow = {

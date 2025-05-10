@@ -6,7 +6,21 @@ export interface FieldTypeDefiniton{
     icon: string;
     label: string;
     defaultConfigs: any;
+    settingsConfig: FieldSettingDefintion[];
     component: Type<unknown>;
+}
+
+
+export interface FieldSettingDefintion {
+    type: 'text' | 'checkbox' | 'select' | 'dynamic-options';
+    label: string;
+    key: string;
+    options?: OptionItem[];
+}
+
+export interface OptionItem {
+    label: string;
+    value: string;
 }
 
 export interface FormField {
@@ -15,6 +29,8 @@ export interface FormField {
     label: string;
     required: boolean;
     inputType?: string;
+    placeholder?: string;
+    options?: OptionItem[];
 }
 
 export interface FormRow {

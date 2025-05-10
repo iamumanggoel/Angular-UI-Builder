@@ -20,6 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
       @for(row of formService.rows(); track row.id){
         <div 
           cdkDropList
+          [cdkDropListData]="row.id"
           (cdkDropListDropped)="drop($event, row.id)"
           [cdkDropListOrientation]="'mixed'"
           class="p-5 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200">
@@ -62,7 +63,6 @@ export class FormEditorComponent {
     }
 
     const dragData = event.item.data as FormField;
-    
-    //this.formService.moveField(dragData.id, event.previousContainer.data, rowId, event.currentIndex);
+    this.formService.moveField(dragData.id, event.previousContainer.data as string, rowId, event.currentIndex);
   }
 }

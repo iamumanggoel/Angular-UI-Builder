@@ -14,7 +14,10 @@ import { FieldPreviewComponent } from "./preview/field-preview.component";
     FieldPreviewComponent
 ],
   template: `
-    <div class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 hover:border-black cursor-pointer"> 
+    <div class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 hover:border-black cursor-pointer"
+      [class]="formService.selectedField()?.id == field().id ? '!border-black' : ''"
+      (click)="formService.setSelectedField(field().id)"
+      > 
       <div class="flex items-center justify-between mb-1">
         <span class="text-sm">{{ field().type | titlecase }}</span>
         <button mat-icon-button (click)="removeField($event)">
