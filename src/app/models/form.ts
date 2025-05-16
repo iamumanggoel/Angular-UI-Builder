@@ -8,6 +8,7 @@ export interface FieldTypeDefiniton{
     defaultConfigs: any;
     settingsConfig: FieldSettingDefintion[];
     component: Type<unknown>;
+    generateCode: (field: FormField) => string;
 }
 
 

@@ -23,7 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
           [cdkDropListData]="row.id"
           (cdkDropListDropped)="drop($event, row.id)"
           [cdkDropListOrientation]="'mixed'"
-          class="p-5 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200">
+          class="relative p-5 pt-2 ps-10 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200">
             <div class="flex justify-between items-center">
               <span> Row </span>
               <button mat-icon-button (click)="formService.removeRow(row.id)">
@@ -39,6 +39,15 @@ import { MatIconModule } from '@angular/material/icon';
                   Drag and drop form elements here
                 </div>
               }
+            </div>
+
+            <div class="absolute left-0 flex gap-0 flex-col top-1/2 -translate-y-1/2">
+              <button mat-icon-button [disabled]="$first" (click)="formService.moveRowUp(row.id)">
+                <mat-icon>keyboard_arrow_up</mat-icon>
+              </button>
+              <button mat-icon-button [disabled]="$last" (click)="formService.moveRowDown(row.id)">
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </button>
             </div>
         </div>
       }

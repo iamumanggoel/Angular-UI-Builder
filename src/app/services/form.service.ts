@@ -58,6 +58,17 @@ const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
     
   ],
   component: TextFieldComponent,
+  generateCode: (field) => `
+     <mat-form-field class="w-full">
+      <mat-label> {{ ${field.label} }} </mat-label>  
+      <input 
+        matInput 
+        [type]="${field.inputType || 'text'}"  
+        [required]="${field.required}"
+        [placeholder]="${field.placeholder || ''}" 
+      />
+    </mat-form-field>
+  `
 }
 
 const CHECKBOX_FIELD_DEFINTION: FieldTypeDefiniton = {
@@ -81,6 +92,12 @@ const CHECKBOX_FIELD_DEFINTION: FieldTypeDefiniton = {
     }
   ],
   component: CheckboxFieldComponent,
+  generateCode: (field) => `
+     <mat-checkbox [required]="${field.required}">  
+      {{ ${field.label }}  
+    </mat-checkbox>
+  `
+
 }
 
 const SELECT_FIELD_DEFINTION: FieldTypeDefiniton = {
@@ -114,6 +131,27 @@ const SELECT_FIELD_DEFINTION: FieldTypeDefiniton = {
     }
   ],
   component: SelectFieldComponent,
+  generateCode: (field) => {
+    let code = 
+      `<mat-form-field class="w-full">\n` +
+      `  <mat-label> {{ ${field.label} }} </mat-label>\n` +
+      `  <mat-select [required]="${field.required}">\n`;
+
+      if(field.options){
+        field.options.forEach(option => {
+          code += `    <mat-option [value]="${option.value}">${option.label}</mat-option>\n`;
+        });
+      }
+      else{
+        code += `    <mat-option value="option1">Option 1</mat-option>\n`;
+        code += `    <mat-option value="option2">Option 2</mat-option>\n`;
+        code += `    <mat-option value="option3">Option 3</mat-option>\n`;
+      }
+      code += `  </mat-select>\n`;
+      code += `</mat-form-field>\n`;
+      return code;
+  
+  }
 }
 
 @Injectable({
@@ -226,6 +264,34 @@ export class FormService {
   }
 
 
+  moveRowUp(rowId: string){
+    const rows = this._rows();
+    const rowIndex = rows.findIndex(row => row.id === rowId);
+
+    if(rowIndex <= 0) return;
+
+    const newRows = [...rows];
+    const temp = newRows[rowIndex - 1];
+    newRows[rowIndex - 1] = newRows[rowIndex];
+    newRows[rowIndex] = temp;
+    this._rows.set(newRows);
+  }
+
+  moveRowDown(rowId: string){
+    const rows = this._rows();
+    const rowIndex = rows.findIndex(row => row.id === rowId);
+
+    if(rowIndex >= rows.length - 1) return;
+
+    const newRows = [...rows];
+    const temp = newRows[rowIndex + 1];
+    newRows[rowIndex + 1] = newRows[rowIndex];
+    newRows[rowIndex] = temp;
+    this._rows.set(newRows);
+
+  }
+
+
   moveField(fieldId: string, src_rowId: string, dest_rowId: string, dest_index: number){
     const rows = this._rows();
 
@@ -262,4 +328,92 @@ export class FormService {
     
     this._rows.set(newRows);
   }
+
+  //Export related functionality
+
+  exportForm(){
+    const formCode = this.generateFormCode();
+    const blob = new Blob([formCode], { type: 'text/plain' });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'form.ts';
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  generateFormCode(): string {
+    let code = this.generateImports();
+    code += this.generateComponentDectorator();
+    code += `template: \`\n`;
+    code += `<form class="flex flex-col gap-4">\n`;
+
+    for(const row of this._rows()){
+      if(row.fields.length > 0){
+        code += `  <div class="flex gap-4 flex-wrap">\n`;
+        for(const field of row.fields){
+          code += `    <div class="flex-1">\n`;
+          code += this.generateFieldCode(field);
+          code += `    </div>\n`;
+        }
+        code += `  </div>\n`;
+      }
+    }
+
+    code += `</form>\n`;
+    code += `\`\n`;
+    code += `})\n`;
+    code += `export class GeneratedFormComponent {\n`;
+    code += `}\n`;
+
+    return code;
+  }
+
+  generateImports(): string {
+    return (
+      `import { Component } from '@angular/core';\n` +
+      `import { CommonModule } from '@angular/common';\n` +
+      `import { FormsModule, ReactiveFormsModule } from '@angular/forms';\n` +
+      `import { MatFormFieldModule } from '@angular/material/form-field';\n` +
+      `import { MatInput } from '@angular/material/input';\n` +
+      `import { MatSelectModule } from '@angular/material/select';\n` +
+      `import { MatCheckboxModule } from '@angular/material/checkbox';\n` +
+      `import { MatRadioModule } from '@angular/material/radio';\n` +
+      `import { MatButtonModule } from '@angular/material/button';\n` +
+      `import { MatIconModule } from '@angular/material/icon';\n` +
+      `import { MatDividerModule } from '@angular/material/divider';\n` +
+      `import { MatDatepickerModule } from '@angular/material/datepicker';\n` +
+      `import { MatNativeDateModule } from '@angular/material/core';\n`
+    );
+  }
+
+  generateComponentDectorator(): string {
+    return (
+      `@Component({\n` +
+      `  selector: 'app-generated-form',\n` +
+      `  standalone: true,\n` + 
+      `  imports: [\n` +
+      `    CommonModule,\n` +
+      `    FormsModule,\n` +
+      `    ReactiveFormsModule,\n` +
+      `    MatFormFieldModule,\n` +
+      `    MatInput,\n` +
+      `    MatSelectModule,\n` +
+      `    MatCheckboxModule,\n` +
+      `    MatRadioModule,\n` +
+      `    MatButtonModule,\n` +
+      `    MatIconModule,\n` +
+      `    MatDividerModule,\n` +
+      `    MatDatepickerModule,\n` +
+      `    MatNativeDateModule\n` +
+      `  ],\n`
+    );
+  }
+
+  generateFieldCode(field: FormField): string {
+    const fieldType = this.getFieldType(field.type);
+    return fieldType?.generateCode(field) || '';
+  }
+
 }
