@@ -5,6 +5,9 @@ import { CheckboxFieldComponent } from '../components/form-builder/form-canvas/p
 import { SelectFieldComponent } from '../components/form-builder/form-canvas/preview/select-field.component';
 import { startViewTransition } from '../utils/view-transition';
 import { DateFieldComponent } from '../components/form-builder/form-canvas/preview/date-field.component';
+import { HeadingFieldComponent } from '../components/form-builder/form-canvas/preview/heading-field.component';
+import { ButtonGroupFieldComponent } from '../components/form-builder/form-canvas/preview/button-group-field.component';
+import { TextAreaFieldComponent } from '../components/form-builder/form-canvas/preview/text-area-field.component';
 
 const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
   type: 'text',
@@ -179,6 +182,84 @@ const DATE_FIELD_DEFINTION: FieldTypeDefiniton = {
       `</mat-form-field>`
 
 }
+
+
+const HEADING_FIELD_DEFINTION: FieldTypeDefiniton = {
+  type: 'heading',
+  label: 'Heading',
+  icon: 'title',
+  component: HeadingFieldComponent,
+  defaultConfigs: {
+    label: 'Heading',
+    placeholder: 'Heading Placeholder'
+  },
+  settingsConfig: [
+    { type: 'text', label: 'Heading', key: 'label' },
+    { type: 'text', label: 'Subheading', key: 'placeholder' }
+  ],
+  generateCode: (field) => 
+    `<div class="mb-4">\n` +
+      `<h2 class="text-xl">{{ ${field.label} }}</h2>\n` +
+      `<p class="text-gray-500">{{ ${field.placeholder} }}</p>\n` +
+    `</div>`
+}
+
+const BUTTON_GROUP_FIELD_DEFINTION: FieldTypeDefiniton = {
+  type: 'button-group',
+  icon: 'smart_button',
+  label: 'Button Group',
+  defaultConfigs: {
+    text: 'Submit',
+    alignment: 'end'
+  },
+  settingsConfig: [
+    { type: 'text', label: 'Text', key: 'text' },
+    { type: 'select', label: 'Alignment', key: 'alignment', options: [
+      { label: 'Start', value: 'start' },
+      { label: 'End', value: 'end' }
+    ]}
+  ],
+  component: ButtonGroupFieldComponent,
+  generateCode: (field) => 
+    `<div class="flex gap-2" [ngClass]="${field.alignment} =='start' ? 'justify-start' : 'justify-end'">\n` +
+      `<button mat-flat-button>{{ ${field.text} }}</button>\n` +
+      `<button mat-button>Cancel</button>\n` +
+    `</div>`
+}
+
+
+const TEXT_AREA_FIELD_DEFINTION: FieldTypeDefiniton = {
+  type: 'text-area',
+  icon: 'text_fields',
+  label: 'Text Area',
+  defaultConfigs: {
+    label: 'Text Area',
+    required: false
+  },
+  settingsConfig: [
+    {
+      type: 'text',
+      label: 'Label',
+      key: 'label'
+    },
+    {
+      type: 'text',
+      label: 'Placeholder',
+      key: 'placeholder'
+    },
+    {
+      type: 'checkbox',
+      label: 'Required',
+      key: 'required'
+    }
+  ],
+  component: TextAreaFieldComponent,
+  generateCode: (field) => 
+    `<mat-form-field class="w-full">\n` +
+      `<mat-label> {{ ${field.label} }} </mat-label>\n` +
+      `<textarea matInput [placeholder]="${field.placeholder || ''}" [required]="${field.required}"></textarea>\n` +
+    `</mat-form-field>`
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -188,7 +269,10 @@ export class FormService {
     ['text', TEXT_FIELD_DEFINTION],
     ['checkbox', CHECKBOX_FIELD_DEFINTION],
     ['select', SELECT_FIELD_DEFINTION],
-    ['date', DATE_FIELD_DEFINTION]
+    ['date', DATE_FIELD_DEFINTION],
+    ['heading', HEADING_FIELD_DEFINTION],
+    ['button-group', BUTTON_GROUP_FIELD_DEFINTION],
+    ['text-area', TEXT_AREA_FIELD_DEFINTION]
   ]);
 
   getFieldTypes(): FieldTypeDefiniton[] {

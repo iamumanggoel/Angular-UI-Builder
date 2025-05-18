@@ -29,6 +29,8 @@ export interface FormField {
     type: string;
     label: string;
     required: boolean;
+    alignment?: 'start' | 'end';
+    text?: string;
     inputType?: string;
     placeholder?: string;
     options?: OptionItem[];
