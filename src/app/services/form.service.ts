@@ -1,8 +1,9 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { ApplicationRef, computed, inject, Injectable, signal } from '@angular/core';
 import { FieldTypeDefiniton, FormField, FormRow } from '../models/form';
 import { TextFieldComponent } from '../components/form-builder/form-canvas/preview/text-field.component';
 import { CheckboxFieldComponent } from '../components/form-builder/form-canvas/preview/checkbox-field.component';
 import { SelectFieldComponent } from '../components/form-builder/form-canvas/preview/select-field.component';
+import { startViewTransition } from '../utils/view-transition';
 
 const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
   type: 'text',
@@ -181,6 +182,8 @@ export class FormService {
   public readonly selectedField = computed(() => {
     return this._rows().flatMap(row => row.fields).find(field => field.id === this._selectedFieldId());
   });
+
+  private appRef = inject(ApplicationRef);
   
   constructor() {
     this._rows.set([
@@ -210,7 +213,9 @@ export class FormService {
       return row;
     });
 
-    this._rows.set(newRows);
+    startViewTransition(() => {
+      this._rows.set(newRows);
+    });
   }
 
   removeField(fieldId: string){
@@ -223,7 +228,11 @@ export class FormService {
         fields: updatedFileds
       }
     });
-    this._rows.set(newRows);
+    startViewTransition(() => {
+      this._rows.set(newRows);
+      this.appRef.tick(); //Force change detection
+
+    });
   }
 
   updateField(fieldId: string, data: Partial<FormField>){
@@ -249,7 +258,10 @@ export class FormService {
     }
 
     const rows = this._rows();
-    this._rows.set([...rows, newRow]);
+
+    startViewTransition(() => {
+      this._rows.set([...rows, newRow]);
+    });
   }
     
   removeRow(rowId: string){
@@ -260,7 +272,11 @@ export class FormService {
     const rows = this._rows();
 
     const newRows = rows.filter(row => row.id !== rowId);
-    this._rows.set(newRows);
+    startViewTransition(() => {
+      this._rows.set(newRows);
+      this.appRef.tick(); //Force change detection
+
+    });
   }
 
 
@@ -274,7 +290,9 @@ export class FormService {
     const temp = newRows[rowIndex - 1];
     newRows[rowIndex - 1] = newRows[rowIndex];
     newRows[rowIndex] = temp;
-    this._rows.set(newRows);
+    startViewTransition(() => {
+      this._rows.set(newRows);
+    });
   }
 
   moveRowDown(rowId: string){
@@ -287,46 +305,52 @@ export class FormService {
     const temp = newRows[rowIndex + 1];
     newRows[rowIndex + 1] = newRows[rowIndex];
     newRows[rowIndex] = temp;
-    this._rows.set(newRows);
+    startViewTransition(() => {
+      this._rows.set(newRows);
+    });
 
   }
 
 
   moveField(fieldId: string, src_rowId: string, dest_rowId: string, dest_index: number){
-    const rows = this._rows();
+    startViewTransition(() => {
+      const rows = this._rows();
 
-    let fieldToMove: FormField | undefined;
-    let src_rowIndex = -1;
-    let src_fieldIndex = -1;
+      let fieldToMove: FormField | undefined;
+      let src_rowIndex = -1;
+      let src_fieldIndex = -1;
 
-    rows.forEach((row, index) => {
-      if(row.id === src_rowId){
-        src_rowIndex = index;
+      rows.forEach((row, index) => {
+        if(row.id === src_rowId){
+          src_rowIndex = index;
 
-        src_fieldIndex = row.fields.findIndex(field => field.id === fieldId);
+          src_fieldIndex = row.fields.findIndex(field => field.id === fieldId);
 
-        if(src_fieldIndex >= 0){
-          fieldToMove = row.fields[src_fieldIndex];
+          if(src_fieldIndex >= 0){
+            fieldToMove = row.fields[src_fieldIndex];
+          }
         }
+      });
+
+      if(!fieldToMove) return;
+
+      const newRows = [...rows];
+
+      const fieldWithRemoveField = newRows[src_rowIndex].fields.filter(field => field.id !== fieldId);
+      newRows[src_rowIndex].fields = fieldWithRemoveField;
+      
+      const dest_rowIndex = newRows.findIndex(row => row.id === dest_rowId);
+
+      if(dest_rowIndex >= 0){
+        const targetFields = [...newRows[dest_rowIndex].fields];
+        targetFields.splice(dest_index, 0, fieldToMove);
+        newRows[dest_rowIndex].fields = targetFields;
       }
+      
+      this._rows.set(newRows);
+      this.appRef.tick(); //Force change detection
+
     });
-
-    if(!fieldToMove) return;
-
-    const newRows = [...rows];
-
-    const fieldWithRemoveField = newRows[src_rowIndex].fields.filter(field => field.id !== fieldId);
-    newRows[src_rowIndex].fields = fieldWithRemoveField;
-    
-    const dest_rowIndex = newRows.findIndex(row => row.id === dest_rowId);
-
-    if(dest_rowIndex >= 0){
-      const targetFields = [...newRows[dest_rowIndex].fields];
-      targetFields.splice(dest_index, 0, fieldToMove);
-      newRows[dest_rowIndex].fields = targetFields;
-    }
-    
-    this._rows.set(newRows);
   }
 
   //Export related functionality

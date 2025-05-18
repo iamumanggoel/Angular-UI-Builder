@@ -34,3 +34,9 @@ color: #ffffff !important;
 mat-form-field {
     size: 1 !important;
 }
+
+
+::view-transition-old(.field-transition),
+::view-transition-new(.field-transition) {
+    height: 100%;
+}

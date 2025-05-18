@@ -14,7 +14,7 @@ import { FormService } from './services/form.service';
   template: `
     <div class="flex flex-col h-screen bg-gray-100 px-4">
 
-      <div class="flex flex-col items-center justify-center gap-1 py-10">
+      <div class="bg-gray-100 flex flex-col items-center justify-center gap-1 py-10 [view-transition-name:top-header] z-10">
         <h1 class="text-2xl tracking-wide font-medium"> Angular Form Designer </h1>
         <p class="text-gray-500"> Create beautiful, responsive forms with Angular Material and tailwindCSS </p>
       </div>
