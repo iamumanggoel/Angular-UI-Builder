@@ -4,6 +4,7 @@ import { TextFieldComponent } from '../components/form-builder/form-canvas/previ
 import { CheckboxFieldComponent } from '../components/form-builder/form-canvas/preview/checkbox-field.component';
 import { SelectFieldComponent } from '../components/form-builder/form-canvas/preview/select-field.component';
 import { startViewTransition } from '../utils/view-transition';
+import { DateFieldComponent } from '../components/form-builder/form-canvas/preview/date-field.component';
 
 const TEXT_FIELD_DEFINTION: FieldTypeDefiniton = {
   type: 'text',
@@ -155,6 +156,29 @@ const SELECT_FIELD_DEFINTION: FieldTypeDefiniton = {
   }
 }
 
+
+const DATE_FIELD_DEFINTION: FieldTypeDefiniton = {
+  type: 'date',
+  label: 'Date Picker',
+  icon: 'calendar_today',
+  component: DateFieldComponent,
+  defaultConfigs: {
+    label: 'Date',
+    required: false
+  },
+  settingsConfig: [
+    { type: 'text', label: 'Label', key: 'label' },
+    { type: 'checkbox', label: 'Required', key: 'required' },
+  ],
+  generateCode: (field) => 
+    `<mat-form-field class="w-full">\n` +
+        `<mat-label>{{ ${field.label} }}</mat-label>\n` +
+        `<input matInput [matDatepicker]="picker${field.id}" [required]="${field.required}" [placeholder]="${field.placeholder} || ''" />\n` +
+        `<mat-datepicker-toggle matIconSuffix [for]="picker${field.id}"></mat-datepicker-toggle>\n` +
+        `<mat-datepicker #picker${field.id} ></mat-datepicker>\n` +
+      `</mat-form-field>`
+
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -163,7 +187,8 @@ export class FormService {
   fieldTypes = new Map<string, FieldTypeDefiniton>([
     ['text', TEXT_FIELD_DEFINTION],
     ['checkbox', CHECKBOX_FIELD_DEFINTION],
-    ['select', SELECT_FIELD_DEFINTION]
+    ['select', SELECT_FIELD_DEFINTION],
+    ['date', DATE_FIELD_DEFINTION]
   ]);
 
   getFieldTypes(): FieldTypeDefiniton[] {
