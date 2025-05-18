@@ -13,7 +13,7 @@ import { CdkDrag, CdkDropList, DragDropModule } from '@angular/cdk/drag-drop';
   template: `
     <div [appStyle]="'primary-container'" class="h-[calc(100vh-150px)] overflow-y-auto">
 
-      <h3 class="text-xl font-medium mb-4">Form Elements</h3>
+      <h3 class="text-xl font-medium mb-4" style="color: #006591;">Form Elements</h3>
       <div 
         cdkDropList
         [cdkDropListSortingDisabled]="'true'"

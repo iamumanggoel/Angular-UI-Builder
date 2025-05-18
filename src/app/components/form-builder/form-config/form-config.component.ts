@@ -21,7 +21,7 @@ import { DynamicOptionsComponent } from "./dynamic-options.component";
   template: `
     <p [appStyle]="'primary-container'" class="h-[calc(100vh-150px)] overflow-y-auto">
       @if(formService.selectedField(); as selectedField){
-        <h3 class="text-xl font-medium mb-6">Field Properties</h3>
+        <h3 class="text-xl font-medium mb-6" style="color: #006591;">Field Properties</h3>
 
         <div class="flex flex-col gap-6 ">
           @for (setting of fieldSettings(); track setting.key) {

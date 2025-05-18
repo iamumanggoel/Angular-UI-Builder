@@ -12,10 +12,10 @@ import { FormService } from './services/form.service';
   selector: 'app-root',
   imports: [RouterOutlet, FormMenuComponent, FormCanvasComponent, FormConfigComponent, DragDropModule, MatIconModule, MatButtonModule],
   template: `
-    <div class="flex flex-col h-screen bg-gray-100 px-4">
+    <div class="flex flex-col h-screen px-4" style="background-color: #f0f9ff;"> 
 
-      <div class="bg-gray-100 flex flex-col items-center justify-center gap-1 py-10 [view-transition-name:top-header] z-10">
-        <h1 class="text-2xl tracking-wide font-medium"> Angular Form Designer </h1>
+      <div class=" flex flex-col items-center justify-center gap-1 py-10 [view-transition-name:top-header] z-10" style="background-color: #f0f9ff;">
+        <h1 class="text-2xl tracking-wide font-medium" style="color: #006591;"> Angular Form Designer </h1>
         <p class="text-gray-500"> Create beautiful, responsive forms with Angular Material and tailwindCSS </p>
       </div>
       <div class="relative flex gap-4" cdkDropListGroup>

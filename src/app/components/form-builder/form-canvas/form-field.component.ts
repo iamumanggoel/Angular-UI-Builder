@@ -14,8 +14,8 @@ import { FieldPreviewComponent } from "./preview/field-preview.component";
     FieldPreviewComponent
 ],
   template: `
-    <div class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 hover:border-black cursor-pointer"
-      [class]="formService.selectedField()?.id == field().id ? '!border-black' : ''"
+    <div class="bg-white p-4 pt-1 rounded-lg shadow-sm border border-gray-200 field cursor-pointer"
+      [class]="formService.selectedField()?.id == field().id ? 'selected-field' : ''" 
       (click)="formService.setSelectedField(field().id)"
       > 
       <div class="flex items-center justify-between mb-1">
@@ -28,7 +28,17 @@ import { FieldPreviewComponent } from "./preview/field-preview.component";
       <app-field-preview [field]="field()" />
     </div>
   `,
-  styles: ``
+  styles: `
+  
+  .field:hover{
+    border-color: #006591 !important;
+  }
+
+  .selected-field{
+    background-color: #f0f9ff !important;
+    border-color: #006591 !important;
+  }
+  `
 })
 export class FormFieldComponent {
   field = input.required<FormField>();

@@ -26,7 +26,7 @@ import { MatIconModule } from '@angular/material/icon';
           [style.view-transition-name]="'row-' + row.id"
           class="relative p-5 pt-2 ps-10 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200">
             <div class="flex justify-between items-center">
-              <span> Row </span>
+              <span style="color: #006591;"> Row </span>
               @if(formService.rows().length > 1) {
                 <button mat-icon-button (click)="formService.removeRow(row.id)">
                   <mat-icon>close</mat-icon>
@@ -45,7 +45,7 @@ import { MatIconModule } from '@angular/material/icon';
                   [style.view-transition-class]="'field-transition'"
                 />
               } @empty {
-                <div class="w-full p-4 border border-dashed border-primary-container rounded-lg text-gray-500 text-center">
+                <div class="w-full p-4 border border-dashed rounded-lg text-gray-500 text-center" style="background-color: #f0f9ff; border-color: #c9e6ff;">
                   Drag and drop form elements here
                 </div>
               }

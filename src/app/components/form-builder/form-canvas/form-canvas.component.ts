@@ -20,7 +20,7 @@ import { FormService } from '../../../services/form.service';
     <div [appStyle]="'primary-container'" class="h-[calc(100vh-150px)] overflow-y-auto">
 
       <div class="pb-4 border-b border-gray-200 flex gap-2 items-center">
-        <h3 class="text-xl font-medium">Form Canvas</h3>
+        <h3 class="text-xl font-medium" style="color: #006591;">Form Canvas</h3>
         <mat-button-toggle-group [(value)]="activeTab" hideSingleSelectionIndicator="true">
           <mat-button-toggle value="editor">Editor</mat-button-toggle>
           <mat-button-toggle value="preview">Preview</mat-button-toggle>
