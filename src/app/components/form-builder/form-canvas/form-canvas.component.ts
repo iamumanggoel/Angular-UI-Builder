@@ -27,7 +27,7 @@ import { FormService } from '../../../services/form.service';
         </mat-button-toggle-group>
         @if(activeTab() === 'editor') {
           <div class="flex-1"></div>
-          <button mat-flat-button (click)="formService.addRow()">
+          <button mat-flat-button class="!rounded" (click)="formService.addRow()">
             Add Row
             <mat-icon>add_circle</mat-icon>
           </button>

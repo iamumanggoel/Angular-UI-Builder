@@ -26,9 +26,11 @@ import { MatIconModule } from '@angular/material/icon';
           class="relative p-5 pt-2 ps-10 mb-4 bg-white rounded-lg border-2 border-dashed border-gray-200">
             <div class="flex justify-between items-center">
               <span> Row </span>
-              <button mat-icon-button (click)="formService.removeRow(row.id)">
-                <mat-icon>close</mat-icon>
-              </button>
+              @if(formService.rows().length > 1) {
+                <button mat-icon-button (click)="formService.removeRow(row.id)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
 
             </div>
             <div class="flex gap-4 flex-wrap">

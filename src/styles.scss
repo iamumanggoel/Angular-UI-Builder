@@ -4,10 +4,33 @@
 
 @use './app/styles/custom.scss';
 
+@use './app/themes/greentheme.css';
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .cdk-drop-list-dragging {
     border: 2px solid lightgray !important;
     background-color: lightgray !important;
+}
+
+
+//mat-form-field issue with tailwind
+.mdc-notched-outline__notch
+{
+  border-right: none !important;
+} 
+
+mat-button-toggle-group {
+    border-radius: 4px !important;
+
+}
+
+.mat-button-toggle-appearance-standard.mat-button-toggle-checked {
+background-color: #006591 !important;
+color: #ffffff !important;
+}
+
+mat-form-field {
+    size: 1 !important;
 }

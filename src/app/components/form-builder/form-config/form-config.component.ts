@@ -65,6 +65,11 @@ import { DynamicOptionsComponent } from "./dynamic-options.component";
 
         </div>
       }
+      @else {
+        <div class="flex items-center justify-center h-full text-gray-500">
+          Select a field to configure
+        </div>
+      }
     </p>
     
   `,
