@@ -22,7 +22,7 @@ import { FormService } from './services/form.service';
         <app-form-menu class="w-64" />
         <app-form-canvas class="flex-1" />
         <app-form-config class="w-64" />
-        <button mat-flat-button class="!absolute -top-[50px] right-0 !rounded" (click)="formService.exportForm()">
+        <button mat-flat-button class="!absolute -top-[50px] right-0 !rounded z-10" (click)="formService.exportForm()">
             Export Form
             <mat-icon>download</mat-icon>
         </button>
